@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <title>Simulador de Mensalidade - Mega Mais</title>
     <link rel="icon" href="logo.png" type="image/x-icon">
-    <style>
+        <style>
   
         body {
             font-family: 'Inter', sans-serif;
@@ -109,48 +109,60 @@
             }
         }
 
-        /* Estilos CSS para a página de login */
-        .login-container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 800px; 
-            width: 100%;
-            box-sizing: border-box;
-            gap: 10px;
-            align-items: center;
-        }
+       /* Estilos CSS para a página de login */
+.login-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 400px; 
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    gap: 15px; 
+}
 
-        .login-container input[type="password"] {
-            width: calc(100% - 20px); 
-            padding: 10px;
-            margin-bottom: auto;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .login-container button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            text-align: center;
-            align-items: center;
-            margin-top: 15px;
-            margin-bottom: 28px;
-        }
-        .login-container button:hover {
-            background-color: #0056b3;
-        }
-        #error-message {
-            color: red;
-            margin-top: 10px;
-            display: none; 
-        }
+.login-container h2 {
+    align-items: center;
+    margin-bottom: -10px;
+}
+
+.login-container input[type="password"] {
+    width: calc(100% - 20px); 
+    padding: 10px;
+    margin-bottom: 0; 
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.login-container button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 20px; 
+    width: auto;
+    min-width: 150px;
+    margin-top: 10px;
+    margin-bottom: 0; 
+}
+
+.login-container button:hover {
+    background-color: #0056b3;
+}
+
+#error-message {
+    color: red;
+    margin-top: 10px;
+    display: none; 
+}
     </style>
 </head>
 
