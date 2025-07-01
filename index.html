@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Simulador de Mensalidade - Mega Mais</title>
+    <link rel="icon" href="logo.png" type="image/x-icon">
+    <style>
+  
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to right, #0066cc, #003d99);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #003d99;
+            margin-bottom: 20px;
+        }
+
+        label, select, input, button, .resultado {
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input[type="number"], select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input[type="checkbox"] {
+            width: auto; 
+            margin-right: 
+        }
+
+        button {
+            margin-top: 25px;
+            padding: 12px;
+            background-color: #0066cc;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-sizing: border-box; 
+        }
+
+        button:hover {
+            background-color: #004080;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .grupo-opcoes {
+            margin-top: 20px;
+        }
+
+        .grupo-opcoes p {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .grupo-opcoes label {
+            font-weight: 400;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .resultado {
+            background: #e6f3ff;
+            color: #003366;
+            font-weight: 600;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            min-height: 40px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+        }
+
+        /* Estilos CSS para a página de login */
+        .login-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 800px; 
+            width: 100%;
+            box-sizing: border-box;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .login-container input[type="password"] {
+            width: calc(100% - 20px); 
+            padding: 10px;
+            margin-bottom: auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .login-container button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            align-items: center;
+            margin-top: 15px;
+            margin-bottom: 28px;
+        }
+        .login-container button:hover {
+            background-color: #0056b3;
+        }
+        #error-message {
+            color: red;
+            margin-top: 10px;
+            display: none; 
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="login-page" class="login-container">
+        <h2>Acesso Restrito</h2><br>
+        <input type="password" id="passwordInput" placeholder="Digite a senha">
+        <button onclick="checkPassword()" id="acessar">Acessar</button>
+        <p id="error-message">Senha incorreta. Tente novamente.</p>
+    </div>
+
+    <div id="content-page" style="display: none;">
+        <div class="container">
+            <h1>Simulador de Mensalidade</h1>
+            <label>FIPE (R$): <input type="number" id="fipe" min="0" step="0.01" /></label>
+            <label>Categoria:
+                <select id="categoria" onchange="onCategoriaChange()">
+                    <option value="">-- selecione --</option>
+                    <option value="moto">Motocicleta</option>
+                    <option value="passeio">Veículo de Passeio</option>
+                    <option value="aplicativo">Aplicativo de Transporte</option>
+                    <option value="caminhao">Caminhão</option>
+                    <option value="vuc">VUC</option>
+                    <option value="especial">Veículo Especial</option>
+                </select>
+            </label>
+
+            <div id="moto-op" class="hidden">
+                <label>Cilindrada:
+                    <select id="cilindrada">
+                        <option value="">-- selecione --</option>
+                        <option value="125cc">125 cc</option>
+                        <option value="150/160cc">150-160 cc</option>
+                        <option value="190/200cc">190-200 cc</option>
+                        <option value="250/300cc">250-300 cc</option>
+                        <option value="400cc">400 cc</option>
+                        <option value="150/160cc_risco">150-160 cc (grupo risco)</option>
+                    </select>
+                </label>
+            </div>
+
+            <div id="danos-op" class="hidden">
+                <label>Danos a terceiros:
+                    <select id="danos">
+                        <option value="nenhum">Nenhum</option>
+                        <option value="30k">30 mil</option>
+                        <option value="50k">50 mil</option>
+                    </select>
+                </label>
+            </div>
+
+            <div id="adicionais" class="hidden">
+                <p>Benefícios Adicionais:</p>
+                <label><input type="checkbox" id="fenomenos" value="fenomenos" /> Fenômenos da Natureza</label>
+                <label><input type="checkbox" id="cota_zero" value="cota_zero" /> Cota Zero</label>
+                <label><input type="checkbox" id="vidros" value="vidros" /> Proteção Básica de Vidros</label>
+                <label><input type="checkbox" id="farol" value="farol" /> Proteção Farol, Retrovisores e Lanternas</label>
+                <label><input type="checkbox" id="carro7" value="carro7" /> Carro reserva 7 dias</label>
+                <label><input type="checkbox" id="carro15" value="carro15" /> Carro reserva 15 dias</label>
+                <label><input type="checkbox" id="carro30" value="carro30" /> Carro reserva 30 dias</label>
+                <label><input type="checkbox" id="app10" value="app10" /> APP R$10.000</label>
+                <label><input type="checkbox" id="app20" value="app20" /> APP R$20.000</label>
+                <label><input type="checkbox" id="app30" value="app30" /> APP R$30.000</label>
+                <label><input type="checkbox" id="app50" value="app50" /> APP R$50.000</label>
+                <label><input type="checkbox" id="telemedicina" value="telemedicina" /> Telemedicina</label>
+                <label><input type="checkbox" id="funeral" value="funeral" /> Assistência Funeral</label>
+                <label><input type="checkbox" id="residencial" value="residencial" /> Assistência Residencial</label>
+                <label><input type="checkbox" id="eletro" value="eletro" /> Eletroassis</label>
+            </div>
+
+            <button onclick="calcularMensalidade()">Calcular</button>
+            <div class="resultado" id="resultado"></div>
+        </div>
+        <button onclick="logout()">Sair</button> </div>
+
+    <script>
+        // Lógica de Login
+        const CORRECT_PASSWORD = "@Megaatendimento2025";
+
+        function checkPassword() {
+            const passwordInput = document.getElementById("passwordInput").value;
+            const errorMessage = document.getElementById("error-message");
+
+            if (passwordInput === CORRECT_PASSWORD) {
+                document.getElementById("login-page").style.display = "none";
+                document.getElementById("content-page").style.display = "flex"; // Usa flex para centralizar o simulador
+                sessionStorage.setItem("loggedIn", "true"); // Marca como logado
+            } else {
+                errorMessage.style.display = "block"; // Mostra a mensagem de erro
+                document.getElementById("passwordInput").value = ""; // Limpa o campo da senha
+            }
+        }
+
+        function logout() {
+            document.getElementById("content-page").style.display = "none";
+            document.getElementById("login-page").style.display = "flex"; // Volta para a tela de login
+            document.getElementById("passwordInput").value = ""; // Limpa a senha ao sair
+            document.getElementById("error-message").style.display = "none"; // Esconde a mensagem de erro
+            sessionStorage.removeItem("loggedIn"); // Remove a marca de logado
+        }
+
+        window.onload = function() {
+            if (sessionStorage.getItem("loggedIn") === "true") {
+                document.getElementById("login-page").style.display = "none";
+                document.getElementById("content-page").style.display = "flex";
+            } else {
+                 document.getElementById("login-page").style.display = "flex"; // Garante que a tela de login apareça por padrão
+            }
+        };
+
+        document.getElementById("passwordInput").addEventListener("keyup", function(event) {
+            if (event.key === "Enter") {
+                checkPassword();
+            }
+        });
+
+        // Tabelas de preços base por tipo de veículo e faixa de FIPE
+        const tabelasMoto = {
+            '125cc': [
+                { min: 0, max: 5000, val: 107 },
+                { min: 5000.01, max: 10000, val: 122 },
+                { min: 10000.01, max: 15000, val: 137 },
+                { min: 15000.01, max: 20000, val: 152 }
+            ],
+            '150/160cc': [
+                { min: 0, max: 5000, val: 121 },
+                { min: 5000.01, max: 10000, val: 136 },
+                { min: 10000.01, max: 15000, val: 152 },
+                { min: 15000.01, max: 20000, val: 173 },
+                { min: 20000.01, max: 25000, val: 200 }
+            ],
+            '190/200cc': [
+                { min: 0, max: 9000, val: 179 },
+                { min: 9000.01, max: 20000, val: 201 },
+                { min: 20000.01, max: 25000, val: 215 }
+            ],
+            '250/300cc': [
+                { min: 0, max: 9000, val: 182 },
+                { min: 9000.01, max: 12000, val: 209 },
+                { min: 12000.01, max: 15000, val: 237 },
+                { min: 15000.01, max: 18000, val: 262 },
+                { min: 18000.01, max: 21000, val: 299 },
+                { min: 21000.01, max: 24000, val: 337 },
+                { min: 24000.01, max: 27000, val: 374 },
+                { min: 27000.01, max: 30000, val: 412 }
+            ],
+            '400cc': [
+                { min: 0, max: 10000, val: 199 },
+                { min: 10000.01, max: 15000, val: 229 },
+                { min: 15000.01, max: 20000, val: 249 },
+                { min: 20000.01, max: 30000, val: 289 }
+            ],
+            '150/160cc_risco': [
+                { min: 0, max: 10000, val: 153 },
+                { min: 10000.01, max: 13000, val: 172 },
+                { min: 13000.01, max: 16000, val: 194 },
+                { min: 16000.01, max: 19000, val: 215 },
+                { min: 19000.01, max: 25000, val: 237 }
+            ]
+        };
+
+        const tabelasPasseio = {
+            nenhum: [
+                { min: 20000, max: 25000, base: 167, fen: 11.5, cz: 39.9 },
+                { min: 25000.01, max: 30000, base: 185, fen: 11.5, cz: 39.9 },
+                { min: 30000.01, max: 35000, base: 224, fen: 13.5, cz: 49.9 },
+                { min: 35000.01, max: 40000, base: 243, fen: 13.5, cz: 49.9 },
+                { min: 40000.01, max: 45000, base: 262, fen: 15.5, cz: 59.9 },
+                { min: 45000.01, max: 50000, base: 274, fen: 15.5, cz: 59.9 },
+                { min: 50000.01, max: 55000, base: 291, fen: 17.5, cz: 69.9 },
+                { min: 55000.01, max: 60000, base: 301, fen: 17.5, cz: 69.9 },
+                { min: 60000.01, max: 70000, base: 315, fen: 19.5, cz: 79.9 },
+                { min: 70000.01, max: 80000, base: 329, fen: 21.5, cz: 79.9 },
+                { min: 80000.01, max: 90000, base: 343, fen: 23.5, cz: 89.9 },
+                { min: 90000.01, max:100000, base: 356, fen: 25.5, cz: 89.9 }
+            ],
+            '30k': [
+                { min: 20000, max: 25000, base: 184, fen: 11.5, cz: 39.9 },
+                { min: 25000.01, max: 30000, base: 202, fen: 11.5, cz: 39.9 },
+                { min: 30000.01, max: 35000, base: 241, fen: 13.5, cz: 49.9 },
+                { min: 35000.01, max: 40000, base: 260, fen: 13.5, cz: 49.9 },
+                { min: 40000.01, max: 45000, base: 279, fen: 15.5, cz: 59.9 },
+                { min: 45000.01, max: 50000, base: 291, fen: 15.5, cz: 59.9 },
+                { min: 50000.01, max: 55000, base: 308, fen: 17.5, cz: 69.9 },
+                { min: 55000.01, max: 60000, base: 318, fen: 17.5, cz: 69.9 },
+                { min: 60000.01, max: 70000, base: 328, fen: 19.5, cz: 79.9 },
+                { min: 70000.01, max: 80000, base: 346, fen: 21.5, cz: 79.9 },
+                { min: 80000.01, max: 90000, base: 360, fen: 23.5, cz: 89.9 },
+                { min: 90000.01, max:100000, base: 373, fen: 25.5, cz: 89.9 }
+            ],
+            '50k': [
+                { min: 20000, max: 25000, base: 195, fen: 11.5, cz: 39.9 },
+                { min: 25000.01, max: 30000, base: 213, fen: 11.5, cz: 39.9 },
+                { min: 30000.01, max: 35000, base: 252, fen: 13.5, cz: 49.9 },
+                { min: 35000.01, max: 40000, base: 271, fen: 13.5, cz: 49.9 },
+                { min: 40000.01, max: 45000, base: 290, fen: 15.5, cz: 59.9 },
+                { min: 45000.01, max: 50000, base: 302, fen: 15.5, cz: 59.9 },
+                { min: 50000.01, max: 55000, base: 319, fen: 17.5, cz: 69.9 },
+                { min: 55000.01, max: 60000, base: 329, fen: 17.5, cz: 69.9 },
+                { min: 60000.01, max: 70000, base: 339, fen: 19.5, cz: 79.9 },
+                { min: 70000.01, max: 80000, base: 357, fen: 21.5, cz: 79.9 },
+                { min: 80000.01, max: 90000, base: 371, fen: 23.5, cz: 89.9 },
+                { min: 90000.01, max:100000, base: 384, fen: 25.5, cz: 89.9 }
+            ]
+        };
+
+        const tabelaAplicativo = {
+            '30k': [
+                { min: 0, max: 20000, base: 220, fen: 9.5, cz: 39.9 },
+                { min: 20000.01, max: 30000, base: 260, fen: 11.5, cz: 49.9 },
+                { min: 30000.01, max: 40000, base: 280, fen: 13.5, cz: 59.9 },
+                { min: 40000.01, max: 50000, base: 310, fen: 15.5, cz: 69.9 },
+                { min: 50000.01, max: 60000, base: 350, fen: 17.5, cz: 79.9 },
+                { min: 60000.01, max: 70000, base: 390, fen: 19.5, cz: 89.9 },
+                { min: 70000.01, max: 80000, base: 430, fen: 21.5, cz: 99.9 },
+                { min: 80000.01, max: 90000, base: 480, fen: 23.5, cz: 109.9 },
+                { min: 90000.01, max: 100000, base: 520, fen: 25.5, cz: 119.9 }
+            ],
+            '50k': [
+                { min: 0, max: 20000, base: 231, fen: 9.5, cz: 39.9 },
+                { min: 20000.01, max: 30000, base: 271, fen: 11.5, cz: 49.9 },
+                { min: 30000.01, max: 40000, base: 291, fen: 13.5, cz: 59.9 },
+                { min: 40000.01, max: 50000, base: 321, fen: 15.5, cz: 69.9 },
+                { min: 50000.01, max: 60000, base: 361, fen: 17.5, cz: 79.9 },
+                { min: 60000.01, max: 70000, base: 401, fen: 19.5, cz: 89.9 },
+                { min: 70000.01, max: 80000, base: 441, fen: 21.5, cz: 99.9 },
+                { min: 80000.01, max: 90000, base: 491, fen: 23.5, cz: 109.9 },
+                { min: 90000.01, max: 100000, base: 531, fen: 25.5, cz: 119.9 }
+            ]
+        };
+
+        const tabelasCaminhoes = {
+            nenhum: [
+                { min: 0, max: 30000, base: 284, fen: 12.5 },
+                { min: 30000.01, max: 40000, base: 306, fen: 15.5 },
+                { min: 40000.01, max: 50000, base: 383, fen: 18.5 },
+                { min: 50000.01, max: 60000, base: 405, fen: 21.5 },
+                { min: 60000.01, max: 70000, base: 473, fen: 24.5 },
+                { min: 70000.01, max: 80000, base: 540, fen: 27.5 },
+                { min: 80000.01, max: 90000, base: 608, fen: 30.5 },
+                { min: 90000.01, max: 100000, base: 676, fen: 33.5 },
+                { min: 100000.01, max: 110000, base: 744, fen: 36.5 },
+                { min: 110000.01, max: 120000, base: 811, fen: 39.5 },
+                { min: 120000.01, max: 130000, base: 879, fen: 42.5 },
+                { min: 130000.01, max: 140000, base: 923, fen: 45.5 },
+                { min: 140000.01, max: 150000, base: 968, fen: 48.5 },
+                { min: 150000.01, max: 160000, base: 995, fen: 51.5 },
+                { min: 160000.01, max: 170000, base: 1012, fen: 54.5 },
+                { min: 170000.01, max: 180000, base: 1055, fen: 57.5 },
+                { min: 180000.01, max: 190000, base: 1098, fen: 60.5 },
+                { min: 190000.01, max: 200000, base: 1141, fen: 63.5 },
+                { min: 200000.01, max: 210000, base: 1236, fen: 66.5 },
+                { min: 210000.01, max: 220000, base: 1332, fen: 69.5 },
+                { min: 220000.01, max: 230000, base: 1428, fen: 72.5 },
+                { min: 230000.01, max: 240000, base: 1523, fen: 75.5 },
+                { min: 240000.01, max: 250000, base: 1619, fen: 78.5 },
+                { min: 250000.01, max: 260000, base: 1715, fen: 81.5 },
+                { min: 260000.01, max: 270000, base: 1811, fen: 84.5 },
+                { min: 270000.01, max: 280000, base: 1906, fen: 87.5 },
+                { min: 280000.01, max: 290000, base: 2002, fen: 90.5 },
+                { min: 290000.01, max: 300000, base: 2098, fen: 93.5 }
+            ],
+            '30k': [
+                { min: 0, max: 30000, base: 309, fen: 12.5 },
+                { min: 30000.01, max: 40000, base: 331, fen: 15.5 },
+                { min: 40000.01, max: 50000, base: 408, fen: 18.5 },
+                { min: 50000.01, max: 60000, base: 430, fen: 21.5 },
+                { min: 60000.01, max: 70000, base: 498, fen: 24.5 },
+                { min: 70000.01, max: 80000, base: 565, fen: 27.5 },
+                { min: 80000.01, max: 90000, base: 633, fen: 30.5 },
+                { min: 90000.01, max: 100000, base: 701, fen: 33.5 },
+                { min: 100000.01, max: 110000, base: 769, fen: 36.5 },
+                { min: 110000.01, max: 120000, base: 836, fen: 39.5 },
+                { min: 120000.01, max: 130000, base: 904, fen: 42.5 },
+                { min: 130000.01, max: 140000, base: 948, fen: 45.5 },
+                { min: 140000.01, max: 150000, base: 993, fen: 48.5 },
+                { min: 150000.01, max: 160000, base: 1020, fen: 51.5 },
+                { min: 160000.01, max: 170000, base: 1037, fen: 54.5 },
+                { min: 170000.01, max: 180000, base: 1080, fen: 57.5 },
+                { min: 180000.01, max: 190000, base: 1123, fen: 60.5 },
+                { min: 190000.01, max: 200000, base: 1166, fen: 63.5 },
+                { min: 200000.01, max: 210000, base: 1261, fen: 66.5 },
+                { min: 210000.01, max: 220000, base: 1357, fen: 69.5 },
+                { min: 220000.01, max: 230000, base: 1453, fen: 72.5 },
+                { min: 230000.01, max: 240000, base: 1548, fen: 75.5 },
+                { min: 240000.01, max: 250000, base: 1644, fen: 78.5 },
+                { min: 250000.01, max: 260000, base: 1740, fen: 81.5 },
+                { min: 260000.01, max: 270000, base: 1836, fen: 84.5 },
+                { min: 270000.01, max: 280000, base: 1931, fen: 87.5 },
+                { min: 280000.01, max: 290000, base: 2027, fen: 90.5 },
+                { min: 290000.01, max: 300000, base: 2123, fen: 93.5 }
+            ],
+            '50k': [
+                { min: 0, max: 30000, base: 328, fen: 12.5 },
+                { min: 30000.01, max: 40000, base: 350, fen: 15.5 },
+                { min: 40000.01, max: 50000, base: 427, fen: 18.5 },
+                { min: 50000.01, max: 60000, base: 449, fen: 21.5 },
+                { min: 60000.01, max: 70000, base: 517, fen: 24.5 },
+                { min: 70000.01, max: 80000, base: 584, fen: 27.5 },
+                { min: 80000.01, max: 90000, base: 652, fen: 30.5 },
+                { min: 90000.01, max: 100000, base: 720, fen: 33.5 },
+                { min: 100000.01, max: 110000, base: 788, fen: 36.5 },
+                { min: 110000.01, max: 120000, base: 855, fen: 39.5 },
+                { min: 120000.01, max: 130000, base: 923, fen: 42.5 },
+                { min: 130000.01, max: 140000, base: 967, fen: 45.5 },
+                { min: 140000.01, max: 150000, base: 1012, fen: 48.5 },
+                { min: 150000.01, max: 160000, base: 1039, fen: 51.5 },
+                { min: 160000.01, max: 170000, base: 1056, fen: 54.5 },
+                { min: 170000.01, max: 180000, base: 1099, fen: 57.5 },
+                { min: 180000.01, max: 190000, base: 1142, fen: 60.5 },
+                { min: 190000.01, max: 200000, base: 1185, fen: 63.5 },
+                { min: 200000.01, max: 210000, base: 1280, fen: 66.5 },
+                { min: 210000.01, max: 220000, base: 1376, fen: 69.5 },
+                { min: 220000.01, max: 230000, base: 1472, fen: 72.5 },
+                { min: 230000.01, max: 240000, base: 1567, fen: 75.5 },
+                { min: 240000.01, max: 250000, base: 1663, fen: 78.5 },
+                { min: 250000.01, max: 260000, base: 1759, fen: 81.5 },
+                { min: 260000.01, max: 270000, base: 1855, fen: 84.5 },
+                { min: 270000.01, max: 280000, base: 1950, fen: 87.5 },
+                { min: 280000.01, max: 290000, base: 2046, fen: 90.5 },
+                { min: 290000.01, max: 300000, base: 2142, fen: 93.5 }
+            ]
+        };
+
+        const tabelasVuc = {
+            nenhum: [
+                { min: 40001, max: 50000, base: 329, fen: 18.5 },
+                { min: 50000.01, max: 60000, base: 352, fen: 21.5 },
+                { min: 60000.01, max: 70000, base: 405, fen: 24.5 },
+                { min: 70000.01, max: 80000, base: 463, fen: 27.5 },
+                { min: 80000.01, max: 90000, base: 522, fen: 30.5 },
+                { min: 90000.01, max: 100000, base: 575, fen: 33.5 }
+            ],
+            '30k': [
+                { min: 40001, max: 50000, base: 354, fen: 18.5 },
+                { min: 50000.01, max: 60000, base: 377, fen: 21.5 },
+                { min: 60000.01, max: 70000, base: 436, fen: 24.5 },
+                { min: 70000.01, max: 80000, base: 495, fen: 27.5 },
+                { min: 80000.01, max: 90000, base: 554, fen: 30.5 },
+                { min: 90000.01, max: 100000, base: 613, fen: 33.5 }
+            ],
+            '50k': [
+                { min: 40001, max: 50000, base: 377, fen: 18.5 },
+                { min: 50000.01, max: 60000, base: 396, fen: 21.5 },
+                { min: 60000.01, max: 70000, base: 455, fen: 24.5 },
+                { min: 70000.01, max: 80000, base: 514, fen: 27.5 },
+                { min: 80000.01, max: 90000, base: 573, fen: 30.5 },
+                { min: 90000.01, max: 100000, base: 632, fen: 33.5 }
+            ]
+        };
+
+        const tabelasEspeciais = {
+            nenhum: [
+                { min: 0, max: 20000, base: 262, fen: 13.5 },
+                { min: 20000.01, max: 40000, base: 266, fen: 15.5 },
+                { min: 40000.01, max: 60000, base: 308, fen: 17.5 },
+                { min: 60000.01, max: 70000, base: 346, fen: 19.5 },
+                { min: 70000.01, max: 80000, base: 396, fen: 21.5 },
+                { min: 80000.01, max: 90000, base: 446, fen: 23.5 },
+                { min: 90000.01, max: 100000, base: 483, fen: 25.5 },
+                { min: 100000.01, max: 110000, base: 511, fen: 27.5 },
+                { min: 110000.01, max: 120000, base: 549, fen: 29.5 },
+                { min: 120000.01, max: 130000, base: 608, fen: 31.5 },
+                { min: 130000.01, max: 140000, base: 652, fen: 33.5 },
+                { min: 140000.01, max: 150000, base: 701, fen: 35.5 },
+                { min: 150000.01, max: 160000, base: 718, fen: 37.5 },
+                { min: 160000.01, max: 170000, base: 764, fen: 39.5 },
+                { min: 170000.01, max: 180000, base: 812, fen: 41.5 },
+                { min: 180000.01, max: 190000, base: 880, fen: 43.5 },
+                { min: 190000.01, max: 200000, base: 948, fen: 45.5 }
+            ],
+            '30k': [
+                { min: 0, max: 20000, base: 262, fen: 13.5 },
+                { min: 20000.01, max: 40000, base: 283, fen: 15.5 },
+                { min: 40000.01, max: 60000, base: 325, fen: 17.5 },
+                { min: 60000.01, max: 70000, base: 363, fen: 19.5 },
+                { min: 70000.01, max: 80000, base: 413, fen: 21.5 },
+                { min: 80000.01, max: 90000, base: 463, fen: 23.5 },
+                { min: 90000.01, max: 100000, base: 500, fen: 25.5 },
+                { min: 100000.01, max: 110000, base: 528, fen: 27.5 },
+                { min: 110000.01, max: 120000, base: 566, fen: 29.5 },
+                { min: 120000.01, max: 130000, base: 625, fen: 31.5 },
+                { min: 130000.01, max: 140000, base: 669, fen: 33.5 },
+                { min: 140000.01, max: 150000, base: 718, fen: 35.5 },
+                { min: 150000.01, max: 160000, base: 735, fen: 37.5 },
+                { min: 160000.01, max: 170000, base: 781, fen: 39.5 },
+                { min: 170000.01, max: 180000, base: 829, fen: 41.5 },
+                { min: 180000.01, max: 190000, base: 897, fen: 43.5 },
+                { min: 190000.01, max: 200000, base: 965, fen: 45.5 }
+            ],
+            '50k': [
+                { min: 0, max: 20000, base: 272, fen: 13.5 },
+                { min: 20000.01, max: 40000, base: 293, fen: 15.5 },
+                { min: 40000.01, max: 60000, base: 335, fen: 17.5 },
+                { min: 60000.01, max: 70000, base: 373, fen: 19.5 },
+                { min: 70000.01, max: 80000, base: 423, fen: 21.5 },
+                { min: 80000.01, max: 90000, base: 473, fen: 23.5 },
+                { min: 90000.01, max: 100000, base: 510, fen: 25.5 },
+                { min: 100000.01, max: 110000, base: 538, fen: 27.5 },
+                { min: 110000.01, max: 120000, base: 576, fen: 29.5 },
+                { min: 120000.01, max: 130000, base: 635, fen: 31.5 },
+                { min: 130000.01, max: 140000, base: 679, fen: 33.5 },
+                { min: 140000.01, max: 150000, base: 728, fen: 35.5 },
+                { min: 150000.01, max: 160000, base: 745, fen: 37.5 },
+                { min: 160000.01, max: 170000, base: 791, fen: 39.5 },
+                { min: 170000.01, max: 180000, base: 839, fen: 41.5 },
+                { min: 180000.01, max: 190000, base: 907, fen: 43.5 },
+                { min: 190000.01, max: 200000, base: 975, fen: 45.5 }
+            ]
+        };
+
+        // Valores para adicionais que dependem ou não da categoria do veículo
+        const adicionaisPorCategoria = {
+            "caminhoes_especiais_diesel_leve": { // Inclui Caminhões, VUC e Especiais
+                vidros: 15.00,
+                carro7: 9.00,
+                carro15: 18.00,
+                carro30: 30.00
+            },
+            "passeio_aplicativos": { // Inclui Passeio e Aplicativo
+                vidros: 12.00,
+                farol: 9.00,
+                carro7: 9.00,
+                carro15: 18.00,
+                carro30: 30.00,
+                app10: 5.50,
+                app20: 7.50,
+                app30: 9.50,
+                app50: 12.50
+            },
+            "qualquer_veiculo": { // Adicionais que se aplicam a todos os tipos de veículos
+                telemedicina: 1.50,
+                funeral: 5.50,
+                residencial: 5.50,
+                eletro: 5.50
+            }
+        };
+
+        // Função para exibir/ocultar opções com base na categoria do veículo
+        function onCategoriaChange() {
+            const categoria = document.getElementById("categoria").value;
+            const motoOp = document.getElementById("moto-op");
+            const danosOp = document.getElementById("danos-op");
+            const adicionaisDiv = document.getElementById("adicionais");
+
+            // Esconde tudo primeiro
+            motoOp.classList.add("hidden");
+            danosOp.classList.add("hidden");
+            adicionaisDiv.classList.add("hidden");
+
+            // Resetar seleções de cilindrada e danos para evitar cálculos incorretos
+            document.getElementById("cilindrada").value = "";
+            document.getElementById("danos").value = "nenhum";
+
+            // Esconder e desmarcar todos os adicionais para resetar o estado
+            const allAdicionaisCheckboxes = document.querySelectorAll('#adicionais input[type="checkbox"]');
+            allAdicionaisCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+                // Ocultar individualmente os que não se aplicam por categoria, se necessário
+                // Exemplo: document.getElementById('farol').parentElement.style.display = 'none';
+            });
+
+            // Mostra as opções relevantes e exibe/oculta adicionais específicos
+            if (categoria === "moto") {
+                motoOp.classList.remove("hidden");
+                adicionaisDiv.classList.remove("hidden");
+                // Mostrar apenas adicionais para moto (qualquer_veiculo)
+                document.getElementById('vidros').parentElement.style.display = 'none';
+                document.getElementById('farol').parentElement.style.display = 'none';
+                document.getElementById('carro7').parentElement.style.display = 'none';
+                document.getElementById('carro15').parentElement.style.display = 'none';
+                document.getElementById('carro30').parentElement.style.display = 'none';
+                document.getElementById('app10').parentElement.style.display = 'none';
+                document.getElementById('app20').parentElement.style.display = 'none';
+                document.getElementById('app30').parentElement.style.display = 'none';
+                document.getElementById('app50').parentElement.style.display = 'none';
+
+                document.getElementById('telemedicina').parentElement.style.display = 'block';
+                document.getElementById('funeral').parentElement.style.display = 'block';
+                document.getElementById('residencial').parentElement.style.display = 'block';
+                document.getElementById('eletro').parentElement.style.display = 'block';
+
+            } else if (categoria === "passeio" || categoria === "aplicativo") {
+                danosOp.classList.remove("hidden");
+                adicionaisDiv.classList.remove("hidden");
+                // Mostrar adicionais para passeio/aplicativo
+                document.getElementById('vidros').parentElement.style.display = 'block';
+                document.getElementById('farol').parentElement.style.display = 'block';
+                document.getElementById('carro7').parentElement.style.display = 'block';
+                document.getElementById('carro15').parentElement.style.display = 'block';
+                document.getElementById('carro30').parentElement.style.display = 'block';
+                document.getElementById('app10').parentElement.style.display = 'block';
+                document.getElementById('app20').parentElement.style.display = 'block';
+                document.getElementById('app30').parentElement.style.display = 'block';
+                document.getElementById('app50').parentElement.style.display = 'block';
+
+                document.getElementById('telemedicina').parentElement.style.display = 'block';
+                document.getElementById('funeral').parentElement.style.display = 'block';
+                document.getElementById('residencial').parentElement.style.display = 'block';
+                document.getElementById('eletro').parentElement.style.display = 'block';
+
+            } else if (categoria === "caminhao" || categoria === "vuc" || categoria === "especial") {
+                danosOp.classList.remove("hidden");
+                adicionaisDiv.classList.remove("hidden");
+                // Mostrar adicionais para caminhões/vuc/especiais
+                document.getElementById('vidros').parentElement.style.display = 'block';
+                document.getElementById('farol').parentElement.style.display = 'none'; // Farol não aplica
+                document.getElementById('carro7').parentElement.style.display = 'block';
+                document.getElementById('carro15').parentElement.style.display = 'block';
+                document.getElementById('carro30').parentElement.style.display = 'block';
+                document.getElementById('app10').parentElement.style.display = 'none'; // APP não aplica
+                document.getElementById('app20').parentElement.style.display = 'none';
+                document.getElementById('app30').parentElement.style.display = 'none';
+                document.getElementById('app50').parentElement.style.display = 'none';
+
+                document.getElementById('telemedicina').parentElement.style.display = 'block';
+                document.getElementById('funeral').parentElement.style.display = 'block';
+                document.getElementById('residencial').parentElement.style.display = 'block';
+                document.getElementById('eletro').parentElement.style.display = 'block';
+            }
+        }
+
+        // Função principal para calcular a mensalidade
+        function calcularMensalidade() {
+            const fipeInput = document.getElementById("fipe").value;
+            const categoria = document.getElementById("categoria").value;
+            const cilindrada = document.getElementById("cilindrada").value;
+            const danos = document.getElementById("danos").value;
+
+            // Validações básicas de entrada
+            if (!fipeInput || !categoria) {
+                alert("Por favor, informe o valor FIPE e selecione a categoria.");
+                return;
+            }
+
+            const fipe = parseFloat(fipeInput);
+            if (isNaN(fipe) || fipe <= 0) {
+                alert("Informe um valor FIPE válido e maior que zero.");
+                return;
+            }
+
+            let valorBase = 0;
+            let valorFenomenos = 0;
+            let valorCotaZero = 0;
+            let tabelaDePrecos;
+            let faixaEncontrada = null;
+
+            // Seleciona a tabela correta com base na categoria e, se aplicável, danos/cilindrada
+            if (categoria === "moto") {
+                if (!cilindrada) {
+                    alert("Por favor, selecione a cilindrada da motocicleta.");
+                    return;
+                }
+                tabelaDePrecos = tabelasMoto[cilindrada];
+                if (!tabelaDePrecos) {
+                    alert("Tabela de preços para esta cilindrada de moto não encontrada.");
+                    return;
+                }
+                for (const faixa of tabelaDePrecos) {
+                    if (fipe >= faixa.min && fipe <= faixa.max) {
+                        valorBase = faixa.val;
+                        faixaEncontrada = faixa;
+                        break;
+                    }
+                }
+            } else if (categoria === "passeio") {
+                tabelaDePrecos = tabelasPasseio[danos];
+                if (!tabelaDePrecos) {
+                    alert("Tabela de preços para esta configuração de passeio não encontrada.");
+                    return;
+                }
+                for (const faixa of tabelaDePrecos) {
+                    if (fipe >= faixa.min && fipe <= faixa.max) {
+                        valorBase = faixa.base;
+                        faixaEncontrada = faixa;
+                        break;
+                    }
+                }
+            } else if (categoria === "aplicativo") {
+                tabelaDePrecos = tabelaAplicativo[danos];
+                if (!tabelaDePrecos) {
+                    alert("Tabela de preços para esta configuração de aplicativo não encontrada.");
+                    return;
+                }
+                for (const faixa of tabelaDePrecos) {
+                    if (fipe >= faixa.min && fipe <= faixa.max) {
+                        valorBase = faixa.base;
+                        faixaEncontrada = faixa;
+                        break;
+                    }
+                }
+            } else if (categoria === "caminhao") {
+                tabelaDePrecos = tabelasCaminhoes[danos];
+                if (!tabelaDePrecos) {
+                    alert("Tabela de preços para esta configuração de caminhão não encontrada.");
+                    return;
+                }
+                for (const faixa of tabelaDePrecos) {
+                    if (fipe >= faixa.min && fipe <= faixa.max) {
+                        valorBase = faixa.base;
+                        faixaEncontrada = faixa;
+                        break;
+                    }
+                }
+            } else if (categoria === "vuc") {
+                tabelaDePrecos = tabelasVuc[danos];
+                if (!tabelaDePrecos) {
+                    alert("Tabela de preços para esta configuração de VUC não encontrada.");
+                    return;
+                }
+                for (const faixa of tabelaDePrecos) {
+                    if (fipe >= faixa.min && fipe <= faixa.max) {
+                        valorBase = faixa.base;
+                        faixaEncontrada = faixa;
+                        break;
+                    }
+                }
+            } else if (categoria === "especial") {
+                tabelaDePrecos = tabelasEspeciais[danos];
+                if (!tabelaDePrecos) {
+                    alert("Tabela de preços para esta configuração de veículo especial não encontrada.");
+                    return;
+                }
+                for (const faixa of tabelaDePrecos) {
+                    if (fipe >= faixa.min && fipe <= faixa.max) {
+                        valorBase = faixa.base;
+                        faixaEncontrada = faixa;
+                        break;
+                    }
+                }
+            }
+
+            // Se nenhuma faixa de FIPE for encontrada, informa e sai
+            if (valorBase === 0) {
+                alert("Valor FIPE fora das faixas definidas para a categoria e configurações selecionadas.");
+                return;
+            }
+
+            let adicionaisTotal = 0;
+
+            // Adiciona valores para Fenômenos da Natureza e Cota Zero (se existirem na faixa encontrada)
+            const fenomenosCheckbox = document.getElementById("fenomenos");
+            const cotaZeroCheckbox = document.getElementById("cota_zero");
+
+            if (fenomenosCheckbox.checked && faixaEncontrada && faixaEncontrada.fen) {
+                valorFenomenos = faixaEncontrada.fen;
+                adicionaisTotal += valorFenomenos;
+            }
+            if (cotaZeroCheckbox.checked && faixaEncontrada && faixaEncontrada.cz) {
+                valorCotaZero = faixaEncontrada.cz;
+                adicionaisTotal += valorCotaZero;
+            }
+
+            // --- Lógica para adicionar valores dos adicionais por categoria ---
+            const chkVidros = document.getElementById("vidros");
+            const chkFarol = document.getElementById("farol");
+            const chkCarro7 = document.getElementById("carro7");
+            const chkCarro15 = document.getElementById("carro15");
+            const chkCarro30 = document.getElementById("carro30");
+            const chkApp10 = document.getElementById("app10");
+            const chkApp20 = document.getElementById("app20");
+            const chkApp30 = document.getElementById("app30");
+            const chkApp50 = document.getElementById("app50");
+            const chkTelemedicina = document.getElementById("telemedicina");
+            const chkFuneral = document.getElementById("funeral");
+            const chkResidencial = document.getElementById("residencial");
+            const chkEletro = document.getElementById("eletro");
+
+
+            // Adicionais que se aplicam a "QUALQUER VEÍCULO"
+            if (chkTelemedicina.checked) {
+                adicionaisTotal += adicionaisPorCategoria.qualquer_veiculo.telemedicina;
+            }
+            if (chkFuneral.checked) {
+                adicionaisTotal += adicionaisPorCategoria.qualquer_veiculo.funeral;
+            }
+            if (chkResidencial.checked) {
+                adicionaisTotal += adicionaisPorCategoria.qualquer_veiculo.residencial;
+            }
+            if (chkEletro.checked) {
+                adicionaisTotal += adicionaisPorCategoria.qualquer_veiculo.eletro;
+            }
+
+            // Adicionais que dependem da categoria específica
+            if (categoria === "caminhao" || categoria === "vuc" || categoria === "especial") {
+                if (chkVidros.checked) {
+                    adicionaisTotal += adicionaisPorCategoria.caminhoes_especiais_diesel_leve.vidros;
+                }
+                if (chkCarro7.checked) {
+                    adicionaisTotal += adicionaisPorCategoria.caminhoes_especiais_diesel_leve.carro7;
+                }
+                if (chkCarro15.checked) {
+                    adicionaisTotal += adicionaisPorCategoria.caminhoes_especiais_diesel_leve.carro15;
+                }
+                if (chkCarro30.checked) {
+                    adicionaisTotal += adicionaisPorCategoria.caminhoes_especiais_diesel_leve.carro30;
+                }
+                // Nota: Farol e APP não se aplicam a esta categoria, conforme sua tabela
+            } else if (categoria === "passeio" || categoria === "aplicativo") {
+                if (chkVidros.checked) {
+                    adicionaisTotal += adicionaisPorCategoria.passeio_aplicativos.vidros;
+                }
+                if (chkFarol.checked) {
+                    adicionaisTotal += adicionaisPorCategoria.passeio_aplicativos.farol;
+                }
+                if (chkCarro7.checked) {
+                    adicionaisTotal += adicionaisPorCategoria.passeio_aplicativos.carro7;
+                }
+                if (chkCarro15.checked) {
+                    adicionaisTotal += adicionaisPorCategoria.passeio_aplicativos.carro15;
+                }
+                if (chkCarro30.checked) {
+                    adicionaisTotal += adicionaisPorCategoria.passeio_aplicativos.carro30;
+                }
+                if (chkApp10.checked && categoria === "aplicativo") {
+                    adicionaisTotal += adicionaisPorCategoria.passeio_aplicativos.app10;
+                }
+                if (chkApp20.checked && categoria === "aplicativo") {
+                    adicionaisTotal += adicionaisPorCategoria.passeio_aplicativos.app20;
+                }
+                if (chkApp30.checked && categoria === "aplicativo") {
+                    adicionaisTotal += adicionaisPorCategoria.passeio_aplicativos.app30;
+                }
+                if (chkApp50.checked && categoria === "aplicativo") {
+                    adicionaisTotal += adicionaisPorCategoria.passeio_aplicativos.app50;
+                }
+            } else if (categoria === "moto") {
+                // Para motos, não há adicionais específicos listados além dos "qualquer_veiculo"
+                // e dos incluídos na tabela base (FEN, CZ se aplicarem no futuro)
+            }
+
+
+            const mensalidadeTotal = valorBase + adicionaisTotal;
+            document.getElementById("resultado").innerText = `Mensalidade Estimada: R$ ${mensalidadeTotal.toFixed(2).replace('.', ',')}`;
+        }
+    </script>
+</body>
+</html>
